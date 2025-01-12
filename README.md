@@ -224,22 +224,42 @@ Modules are loaded recursively, so you can organize your routes and sockets in s
 ### Custom CORS Configuration
 
 ```python
+from datetime import timedelta
 from integral_flask_project import Integral_flask_project
 
 app = Integral_flask_project(__name__)
 cors = app.cors
 
-# Create configuration for specific blueprint
+#Create a custom CORS configuration for an API model
 cors.create_config(
-    name="api",
-    origins=["http://localhost:3000"],
-    methods=["GET", "POST", "PUT", "DELETE"],
-    headers=["Content-Type", "Authorization"],
-    expose_headers=["Content-Range", "X-Total-Count"],
-    max_age=3600,
-    supports_credentials=True
-)
+            name="api",
+            origins=["*"],
+            methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            allow_headers=[
+                "Content-Type",
+                "Authorization",
+                "X-API-Key",
+                "X-Request-ID",
+                "X-Rate-Limit-Limit",
+                "X-Rate-Limit-Remaining",
+                "X-Rate-Limit-Reset"
+            ],
+            expose_headers=[
+                "X-Request-ID",
+                "X-Rate-Limit-Limit",
+                "X-Rate-Limit-Remaining",
+                "X-Rate-Limit-Reset"
+            ],
+            supports_credentials=True,
+            max_age=timedelta(hours=1),
+            header_values={
+                "X-Content-Type-Options": "nosniff",
+                "X-Rate-Limit-Limit": "10",
+                "Access-Control-Allow-Origin": "*"
+            }
+        )
 
+print(cors.configs)
 # Configuration is automatically applied to all blueprint routes
 ```
 
