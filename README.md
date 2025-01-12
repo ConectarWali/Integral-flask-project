@@ -241,8 +241,7 @@ cors.create_config(
             max_age=timedelta(hours=1),
             header_values={
                 "X-Content-Type-Options": "nosniff",
-                "X-Rate-Limit-Limit": "10",
-                "Access-Control-Allow-Origin": "*"
+                "X-Rate-Limit-Limit": "10"
             }
         )
 
