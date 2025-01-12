@@ -169,22 +169,7 @@ SOCKETIO_PING_INTERVAL=25
 
 ### CORS Configuration
 
-The library provides a flexible CORS manager for handling Cross-Origin Resource Sharing:
-
-```python
-from integral_flask_project import Integral_flask_project
-
-app = Integral_flask_project(__name__)
-cors = app.cors
-
-# Create CORS configuration for an API blueprint
-cors.create_config(
-    name="api",
-    origins=["http://localhost:3000"],
-    methods=["GET", "POST"],
-    headers=["Content-Type"]
-)
-```
+CORS are already configured by default as: CORS(app)
 
 ### Module Auto-Loading
 
@@ -222,6 +207,8 @@ Modules are loaded recursively, so you can organize your routes and sockets in s
 ## Advanced Usage
 
 ### Custom CORS Configuration
+
+The library provides a flexible CORS manager for handling Cross-Origin Resource Sharing:
 
 ```python
 from datetime import timedelta
