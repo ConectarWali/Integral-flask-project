@@ -82,6 +82,14 @@ with app.app_context():
     db.create_all()
 ```
 
+you can use the command line options as:
+
+```bash
+flask db init
+flask db migrate
+flask db upgrade
+```
+
 ### JWT Authentication
 
 ```python
