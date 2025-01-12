@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 from flask import Flask
-from src.config.cors_config import CORS_manager
+from src_IFP.config.cors_config import CORS_manager
 
 class TestCORSManager(unittest.TestCase):
     def setUp(self):

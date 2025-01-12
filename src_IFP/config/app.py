@@ -7,10 +7,10 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO
 
+from src_IFP.config.database_config import Database_config
 
-from src.config.config import Production_config
-from src.config.cors_config import CORS_manager
-from src.config.database_config import Database_config
+from src_IFP.config.config import Production_config
+from src_IFP.config.cors_config import CORS_manager
 
 class App_config:
 
@@ -24,7 +24,8 @@ class App_config:
         self.__app:Flask = app
         self._cors:CORS_manager = CORS_manager(app)
 
-    def create_app(self, env:object|str|None) -> Tuple[JWTManager, Tuple[SQLAlchemy, Migrate], SocketIO, Mail]:
+
+    def create_app(self, env:object|str|None) -> Tuple[JWTManager, Tuple[SQLAlchemy, Migrate, Database_config], SocketIO, Mail]:
         self.__init_env(env)
         jwt = self.__init_JWT()
         app_db = self.__init_database()
@@ -40,10 +41,9 @@ class App_config:
         if not self._cors.configs: CORS(self.__app)
         else: self._cors._apply_cors()
 
-    def __init_database(self)->Tuple[SQLAlchemy, Migrate]:
+    def __init_database(self)->Tuple[SQLAlchemy, Migrate, Database_config]:
         database = Database_config(self.__app)
-        database.setup()
-        return database.app_db, database.migration
+        return database.app_db, database.migration, database
 
     def __init_SocketIO(self)->SocketIO:
         return SocketIO(self.__app, message_queue=self.__app.config['SOCKETIO_MESSAGE_QUEUE'])

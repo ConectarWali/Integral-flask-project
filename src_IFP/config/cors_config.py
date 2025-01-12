@@ -3,7 +3,7 @@ from flask import Flask
 from flask_cors import CORS
 from functools import lru_cache
 
-from src.config.cors.cors import CORS_config
+from src_IFP.config.cors.cors import CORS_config
 
 class CORS_manager:
     """

@@ -1,1 +1,0 @@
-from src.config.app import App_config

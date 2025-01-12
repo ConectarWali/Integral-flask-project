@@ -8,8 +8,8 @@ from flask_migrate import Migrate
 from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 
-from src import App_config
-from src.config.cors_config import CORS_manager
+from src_IFP import App_config
+from src_IFP.config.cors_config import CORS_manager
 
 class Integral_flask_project(Flask):
     """
@@ -122,7 +122,7 @@ class Integral_flask_project(Flask):
         self.__cors:CORS_manager = self.__app_config._cors
 
         self.__jwt, db, self.__socket, self.__mail = self.__app_config.create_app(env)
-        self.__app_db, self.__migration = db
+        self.__app_db, self.__migration, self.__database = db
 
     @property
     def cors(self) -> CORS_manager:
@@ -233,6 +233,7 @@ class Integral_flask_project(Flask):
         self.__app_config._init_cors()
         self.__import_moduls()
         self.__register_all_blueprints()
+        self.__database.setup() 
         
         match self.__run_type:
             case Integral_flask_project.RUN_TYPE.FLASK:

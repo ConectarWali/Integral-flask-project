@@ -45,8 +45,6 @@ class Config:
     FLASK_APP = getenv('FLASK_APP', 'app.py')
     FLASK_NAME = getenv('FLASK_NAME', 'My Flask App')
     SECRET_KEY = getenv('SECRET_KEY', urandom(24).hex())
-    DEBUG = getenv('DEBUG', 'False') == 'True'
-    FLASK_ENV = getenv('FLASK_ENV', 'development')
 
     # SQLAlchemy Config
     SQLALCHEMY_TRACK_MODIFICATIONS = getenv('SQLALCHEMY_TRACK_MODIFICATIONS', 'False') == 'True'
@@ -82,8 +80,8 @@ class Development_config(Config):
         FLASK_ENV (str): Set to 'development'
         SQLALCHEMY_DATABASE_URI (str): Development database URI
     """
-    DEBUG = True
-    FLASK_ENV = 'development'
+    DEBUG = getenv('DEBUG', True)
+    FLASK_ENV = getenv('FLASK_ENV', 'development')
     SQLALCHEMY_DATABASE_URI = getenv('SQLALCHEMY_DATABASE_URI_DEV', 'sqlite:///development_database.sql')
 
 
@@ -97,6 +95,6 @@ class Production_config(Config):
         FLASK_ENV (str): Set to 'production'
         SQLALCHEMY_DATABASE_URI (str): Production database URI
     """
-    DEBUG = False
-    FLASK_ENV = 'production'
+    DEBUG = getenv('DEBUG', False)
+    FLASK_ENV = getenv('FLASK_ENV', 'production')
     SQLALCHEMY_DATABASE_URI = getenv('SQLALCHEMY_DATABASE_URI_PROD', 'sqlite:///production_database.sql')
