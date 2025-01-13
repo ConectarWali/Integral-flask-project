@@ -219,16 +219,16 @@ class Integral_flask_project(Flask):
         if path.exists(self.__path_sockets):
             import_moduls(self.__path_sockets)
 
-    def run_app(self, **kwargs) -> None:
+    def  run(self, host: str | None = None,
+        port: int | None = None,
+        debug: bool | None = None,
+        load_dotenv: bool = True,
+        **kwargs:Any) -> None:
         """
         Initializes and runs the application with the configured settings.
         
         Args:
             **kwargs: Configuration options for Flask's run method
-                     Common options include:
-                     - host: The hostname to listen on
-                     - port: The port of the webserver
-                     - debug: Enable or disable debug mode
         """
         self.__app_config._init_cors()
         self.__import_moduls()
@@ -239,5 +239,4 @@ class Integral_flask_project(Flask):
             case Integral_flask_project.RUN_TYPE.FLASK:
                 super().run(**kwargs)
             case Integral_flask_project.RUN_TYPE.SOKET_IO:
-                super().run(**kwargs)
-                self.__socket.run(self, **kwargs) #type:ignore
+                self.__socket.run(self, **kwargs)
