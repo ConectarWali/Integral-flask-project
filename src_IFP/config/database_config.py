@@ -6,7 +6,6 @@ from sqlalchemy_utils import database_exists, create_database
 from contextlib import contextmanager
 from colorama import init as colorama_init, Fore, Style
 from src_IFP.config.config import Config
-import re
 
 colorama_init(autoreset=True)
 
