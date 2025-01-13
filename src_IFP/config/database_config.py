@@ -128,26 +128,19 @@ class Database_config(Config):
         if not path.exists(migrations_dir):
             print(f"{Fore.YELLOW}Migrations not initialized. Running `init`...{Style.RESET_ALL}")
             with self.__error_handling("migrations initialization"):
-                init()  # flask db init
-                migrate()  # flask db migrate
+                init(self.__migration.directory)  # flask db init
+                migrate(self.__migration.directory)  # flask db migrate
             print(f"{Fore.GREEN}Migrations initialized successfully{Style.RESET_ALL}")
         else:
             print(f"{Fore.BLUE}Checking for model changes...{Style.RESET_ALL}")
             with self.__error_handling("migrations update"):
-                migrate()  # flask db migrate
+                migrate(self.__migration.directory)  # flask db migrate
             print(f"{Fore.GREEN}Migration files updated{Style.RESET_ALL}")
-
-        # If new database, stamp migrations
-        if is_new_database:
-            print(f"{Fore.YELLOW}New database detected, stamping migrations...{Style.RESET_ALL}")
-            with self.__error_handling("stamping migrations"):
-                stamp()
-            print(f"{Fore.GREEN}Migrations stamped successfully{Style.RESET_ALL}")
         
         # Apply migrations
         print(f"{Fore.YELLOW}Applying pending migrations...{Style.RESET_ALL}")
         with self.__error_handling("applying migrations"):
-            upgrade()  # flask db upgrade
+            upgrade(self.__migration.directory)  # flask db upgrade
         print(f"{Fore.GREEN}Migrations applied successfully{Style.RESET_ALL}")
 
     def setup(self) -> None:
