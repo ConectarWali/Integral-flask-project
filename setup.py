@@ -4,6 +4,8 @@ from setuptools import setup, find_packages
 def load_requirements(filename):
     with open(filename, "r") as f:
         return f.read().splitlines()
+    
+#print(load_requirements("requirements.txt"))
 
 setup(
     name='Integral_flask_project',

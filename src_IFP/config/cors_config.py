@@ -1,9 +1,10 @@
-from typing import Dict, List
+from typing import Dict, Generator, List
 from flask import Flask
 from flask_cors import CORS
 from functools import lru_cache
 
 from src_IFP.config.cors.cors import CORS_config
+
 
 class CORS_manager:
     """
@@ -11,8 +12,8 @@ class CORS_manager:
     Allows creating and managing multiple CORS configurations for different blueprints.
 
     Attributes:
-        __app (Flask): The Flask application instance
-        __configs (Dict[str, CORS_config]): Dictionary storing CORS configurations
+        __app (Flask): The Flask application instance.
+        __configs (Dict[str, CORS_config]): Dictionary storing CORS configurations.
     """
 
     def __init__(self, app: Flask) -> None:
@@ -20,10 +21,11 @@ class CORS_manager:
         Initialize the CORS manager.
 
         Args:
-            app (Flask): The Flask application instance to manage CORS for
+            app (Flask): The Flask application instance to manage CORS for.
         """
         self.__app = app
         self.__configs: Dict[str, CORS_config] = {}
+        self.__cors_applied = False  # Track if CORS has already been applied
 
     @property
     def configs(self) -> Dict[str, CORS_config]:
@@ -31,68 +33,49 @@ class CORS_manager:
         Get all CORS configurations.
 
         Returns:
-            Dict[str, CORS_config]: Dictionary of CORS configurations keyed by name
+            Dict[str, CORS_config]: Dictionary of CORS configurations keyed by name.
         """
         return self.__configs
 
-    def create_config(self, **kwargs) -> None:
+    def create_config(self, name: str, **kwargs) -> None:
         """
-        Create a new CORS configuration and set up response headers.
+        Create a new CORS configuration.
 
         Args:
-            **kwargs: Configuration options including:
-                     - name (str): Required. Name of the configuration
-                     - Other CORS configuration options
+            name (str): Name of the configuration.
+            **kwargs: Other CORS configuration options.
 
         Raises:
-            ValueError: If name parameter is not provided
+            ValueError: If the 'name' parameter is not provided or is a duplicate.
         """
-        name = kwargs.pop("name", None)
         if not name:
-            raise ValueError("name parameter is required")
-            
-        config = CORS_config(name=name, **kwargs)
-        self.__configs[name] = config
+            raise ValueError(f"A CORS configuration needs to have a name")
+        if name in self.__configs:
+            raise ValueError(f"A CORS configuration with the name '{name}' already exists.")
 
-        @self.__app.after_request
-        def add_headers(response):
-            """
-            Add CORS headers to the response.
-
-            Args:
-                response: Flask response object
-
-            Returns:
-                Modified response with CORS headers
-            """
-            for header, value in config.header_values.items():
-                if header in config.allow_headers:
-                    response.headers[header] = value
-            return response
+        self.__configs[name] = CORS_config(name=name, **kwargs)
 
     @lru_cache(maxsize=128)
-    def _get_endpoints(self, blueprint_name: str) -> List[str]:
+    def _get_endpoints(self)->Generator:
         """
-        Get all endpoints for a given blueprint name.
-        Results are cached for performance.
-
-        Args:
-            blueprint_name (str): Name of the blueprint
+        Get all registered endpoints in the Flask app, including both global and blueprint routes.
 
         Returns:
-            List[str]: List of endpoint URLs for the blueprint
+            List[str]: List of all endpoint URLs.
         """
-        return [
-            rule.rule
-            for rule in self.__app.url_map.iter_rules()
-            if rule.endpoint.startswith(f"{blueprint_name}.")
-        ]
+        for rule in self.__app.url_map.iter_rules():
+            yield rule.rule
+
 
     def _apply_cors(self) -> None:
         """
         Apply CORS configurations to all registered endpoints.
         Should be called after all routes are registered.
         """
+        resources = {}
         for config_name, config in self.__configs.items():
-            resources = {route: config.to_dict() for route in self._get_endpoints(config_name)}
+            for route in self._get_endpoints():
+                resources[route] = config.to_dict()
+
+        if resources:
             CORS(self.__app, resources=resources)

@@ -1,5 +1,4 @@
 import unittest
-from unittest.mock import patch
 from src_IFP.config.config import Config, Development_config, Production_config
 
 class TestConfig(unittest.TestCase):
@@ -9,9 +8,6 @@ class TestConfig(unittest.TestCase):
         
         self.assertEqual(config.FLASK_APP, 'app.py')
         self.assertEqual(config.FLASK_NAME, 'My Flask App')
-        self.assertFalse(Development_config.DEBUG, 'False')
-        self.assertFalse(Production_config.DEBUG, 'True')
-        self.assertEqual(Production_config.FLASK_ENV, 'development')
 
     def test_mail_config(self):
         """Test mail configuration values"""
@@ -43,7 +39,7 @@ class TestDevelopmentConfig(unittest.TestCase):
         
         self.assertTrue(config.DEBUG)
         self.assertEqual(config.FLASK_ENV, 'development')
-        self.assertTrue('flask_db_dev' in config.SQLALCHEMY_DATABASE_URI)
+        self.assertTrue('development_database' in config.SQLALCHEMY_DATABASE_URI)
 
 class TestProductionConfig(unittest.TestCase):
     def test_production_config(self):

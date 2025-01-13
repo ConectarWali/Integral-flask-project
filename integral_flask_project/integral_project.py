@@ -1,6 +1,6 @@
 from enum import Enum
 from os import PathLike, path
-from typing import Tuple, List
+from typing import Any, Tuple, List
 from flask import Flask, Blueprint
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
@@ -237,6 +237,6 @@ class Integral_flask_project(Flask):
         
         match self.__run_type:
             case Integral_flask_project.RUN_TYPE.FLASK:
-                super().run(**kwargs)
+                super().run(host, port, debug, load_dotenv, **kwargs)
             case Integral_flask_project.RUN_TYPE.SOKET_IO:
-                self.__socket.run(self, **kwargs)
+                self.__socket.run(self,host, port, **kwargs)
