@@ -9,6 +9,7 @@ from flask_socketio import SocketIO
 from flask_sqlalchemy import SQLAlchemy
 
 from src_IFP import App_config
+from src_IFP.config.config import Development_config
 from src_IFP.config.cors_config import CORS_manager
 
 class Integral_flask_project(Flask):
@@ -219,24 +220,24 @@ class Integral_flask_project(Flask):
         if path.exists(self.__path_sockets):
             import_moduls(self.__path_sockets)
 
-    def  run(self, host: str | None = None,
-        port: int | None = None,
-        debug: bool | None = None,
-        load_dotenv: bool = True,
+    def  run_app(self, 
+        *args,
         **kwargs:Any) -> None:
         """
         Initializes and runs the application with the configured settings.
         
         Args:
-            **kwargs: Configuration options for Flask's run method
+            *args: Arguments for Flask's run method or SocketIO's run method
+            **kwargs: Configuration options for Flask's run method or SocketIO's run method
         """
         self.__app_config._init_cors()
         self.__import_moduls()
         self.__register_all_blueprints()
         self.__database.setup() 
         
-        match self.__run_type:
-            case Integral_flask_project.RUN_TYPE.FLASK:
-                super().run(host, port, debug, load_dotenv, **kwargs)
-            case Integral_flask_project.RUN_TYPE.SOKET_IO:
-                self.__socket.run(self,host, port, **kwargs)
+        if self.config['FLASK_ENV'] == Development_config.FLASK_ENV:
+            match self.__run_type:
+                case Integral_flask_project.RUN_TYPE.FLASK:
+                    super().run(*args, **kwargs)
+                case Integral_flask_project.RUN_TYPE.SOKET_IO:
+                    self.__socket.run(self, *args, **kwargs)

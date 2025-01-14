@@ -9,7 +9,7 @@ def load_requirements(filename):
 
 setup(
     name='Integral_flask_project',
-    version='0.0.2',
+    version='0.0.3',
     description="A powerful Flask extension that provides an integrated solution for building robust web applications with WebSocket support, JWT authentication, database management, email handling, and CORS configuration.",
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
